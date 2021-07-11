@@ -176,3 +176,183 @@ class LinkedList:
             return _reverse_recursive(cur, prev)
 
         self.head = _reverse_recursive(cur=self.head, prev=None)
+
+    def merge_sorted(self, llist):
+        p = self.head
+        q = llist.head
+        s = None
+
+        if not p:
+            return q
+        if not q:
+            return p
+
+        if p and q:
+            if p.data <= q.data:
+                s = p
+                p = s.next
+            else:
+                s = q
+                q = s.next
+            new_head = s
+
+        while p and q:
+            if p.data <= q.data:
+                s.next = p
+                s = p
+                p = s.next
+            else:
+                s.next = q
+                s = q
+                q = s.next
+
+        if not p:
+            s.next = q
+        if not q:
+            s.next = p
+
+        self.head = new_head
+        return self.head
+
+    def remove_duplicates(self):
+        cur = self.head
+        prev = None
+
+        dup_values = dict()
+
+        while cur:
+            if cur.data in dup_values:
+                prev.next = cur.next
+                cur = None
+            else:
+                dup_values[cur.data] = 1
+                prev = cur
+            cur = prev.next
+
+    def print_nth_from_last(self, n, method):
+        if method == 1:
+            total_len = self.len_iterative()
+            cur = self.head
+
+            while cur:
+                if total_len == n:
+                    return cur.data
+                total_len -= 1
+                cur = cur.next
+            if cur is None:
+                return
+
+        elif method == 2:
+            p = self.head
+            q = self.head
+
+            if n < 0:
+                count = 0
+                while q:
+                    count += 1
+                    if count >= n:
+                        break
+                    q = q.next
+
+                if not q:
+                    print(str(n) + " is greater than the number of nodes in list.")
+                    return
+
+                while p and q.next:
+                    p = p.next
+                    q = q.next
+                return p.data
+            else:
+                return None
+
+    def count_occurences_iterative(self, data):
+        count = 0
+        cur = self.head
+        while cur:
+            if cur.data == data:
+                count += 1
+            cur = cur.next
+        return count
+
+    def count_occurences_recursive(self, node, data):
+        if not node:
+            return 0
+        if node.data == data:
+            return 1 + self.count_occurences_recursive(node.next, data)
+        else:
+            return self.count_occurences_recursive(node.next, data)
+
+    def rotate(self, k):
+        if self.head and self.head.next:
+            p = self.head
+            q = self.head
+            prev = None
+            count = 0
+
+            while p and count < k:
+                prev = p
+                p = p.next
+                q = q.next
+                count += 1
+
+            p = prev
+            while q:
+                prev = q
+                q = q.next
+            q = prev
+
+            q.next = self.head
+            self.head = p.next
+            p.next = None
+
+    def is_palindrome(self, method):
+        if method == 1:
+            s = ""
+            p = self.head
+
+            while p:
+                s += p.data
+                p = p.next
+            return s == s[::-1]
+
+        elif method == 2:
+            p = self.head
+            s = []
+
+            while p:
+                s.append(p.data)
+                p = p.next
+
+            p = self.head
+
+            while p:
+                data = s.pop()
+                if p.data != data:
+                    return False
+                p = p.next
+            return True
+
+        elif method == 3:
+            if self.head:
+                p = self.head
+                q = self.head
+                prev = []
+
+                i = 0
+                while q:
+                    prev.append(q)
+                    q = q.next
+                    i += 1
+                q = prev[i - 1]
+
+                count = 1
+
+                while count <= i//2 + 1:
+                    if prev[-count].data != p.data:
+                        return False
+                    p = p.next
+                    count += 1
+                return True
+            else:
+                return True
+
